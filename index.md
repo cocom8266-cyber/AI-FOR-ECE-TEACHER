@@ -5,7 +5,7 @@
 ## 导航
 
 - [一、AI工具选择表](./tools.md)
-- [二、提示词模板库](./prompt-builder.html)
+- [二、提示词模板库](prompt-builder.html)
 
 ---
 
