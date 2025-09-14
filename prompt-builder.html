@@ -52,12 +52,24 @@
             border-radius: 4px; 
             box-sizing: border-box; 
         }
-        .two-columns {
+        .two-columns, .three-columns {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
-        .two-columns > div {
+        .two-columns > div, .three-columns > div {
             flex: 1;
+            min-width: 250px;
+        }
+        .checkbox-group, .multi-select-container {
+            margin: 10px 0;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            min-width: 250px;
         }
         .result { 
             margin: 20px 0; 
@@ -101,6 +113,40 @@
         .back-link {
             margin-top: 30px;
             display: inline-block;
+        }
+        .select-wrapper {
+            position: relative;
+        }
+        .multi-select {
+            appearance: none;
+            padding-right: 30px;
+        }
+        .select-arrow {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        .selected-options {
+            margin-top: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .selected-option {
+            background-color: #e0f2f1;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .remove-option {
+            cursor: pointer;
+            font-weight: bold;
+            color: #4CAF50;
         }
     </style>
 </head>
@@ -168,7 +214,7 @@
             <button class="generate-btn" onclick="generatePoemPrompt()">生成提示词</button>
         </div>
 
-        <!-- 8. 幼儿园教学PPT生成 -->
+        <!-- 4. 教学PPT生成 -->
         <div class="input-area">
             <h3>4. 教学PPT生成</h3>
             课题：<input type="text" id="pptTopic" placeholder="例如：认识昆虫、中秋节习俗"><br>
@@ -186,24 +232,72 @@
 
     <!-- 2. 观察分析标签页 -->
     <div id="observation" class="tab-content">
-        <!-- 4. 观察记录 -->
+        <!-- 1. 观察记录（优化后） -->
         <div class="input-area">
-            <h3>1. 观察记录</h3>
-            活动类型：<input type="text" id="observeActivity" placeholder="例如：区域活动、户外活动"><br>
-            幼儿表现：<textarea id="observeBehavior" placeholder="例如：幼儿A在积木区搭建高塔，多次倒塌后仍继续尝试"></textarea><br>
-            观察目的：<input type="text" id="observeGoal" placeholder="例如：分析幼儿解决问题的能力"><br>
-            <button class="generate-btn" onclick="generateObservePrompt()">生成提示词</button>
+            <h3>1. 观察记录与分析</h3>
+            
+            <div class="three-columns">
+                <div>
+                    观察对象：<input type="text" id="observeObject" placeholder="例如：小明（可写姓名或特征）"><br>
+                    幼儿年龄：<input type="text" id="observeAge" placeholder="例如：4岁2个月"><br>
+                    观察日期：<input type="text" id="observeDate" placeholder="例如：2023年9月15日">
+                </div>
+                <div>
+                    观察场景：<select id="observeScenario">
+                        <option value="">选择场景</option>
+                        <option value="集体教学活动">集体教学活动</option>
+                        <option value="区域活动">区域活动</option>
+                        <option value="户外活动">户外活动</option>
+                        <option value="生活活动">生活活动</option>
+                        <option value="游戏活动">游戏活动</option>
+                        <option value="其他">其他</option>
+                    </select><br>
+                    观察地点：<input type="text" id="observeLocation" placeholder="例如：建构区、操场、活动室"><br>
+                    观察时长：<input type="text" id="observeDuration" placeholder="例如：15分钟、整个活动过程">
+                </div>
+            </div>
+            
+            观察内容（客观描述）：<textarea id="observeContent" rows="4" placeholder="例如：幼儿在积木区尝试搭建高塔，第一次用了5块积木倒塌了，他看了看旁边小朋友的搭建方法，第二次尝试用了不同形状的积木，成功搭建了8块高的塔，并高兴地拍手"></textarea><br>
+            
+            观察目的：<input type="text" id="observePurpose" placeholder="例如：分析幼儿解决问题的能力、社会交往能力等"><br>
+            
+            分析依据（可多选）：
+            <div class="select-wrapper">
+                <select id="observeGuides" class="multi-select" multiple>
+                    <option value="《3-6岁儿童学习与发展指南》">《3-6岁儿童学习与发展指南》</option>
+                    <option value="《幼儿园教育指导纲要》">《幼儿园教育指导纲要》</option>
+                    <option value="《幼儿园保育教育质量评估指南》">《幼儿园保育教育质量评估指南》</option>
+                </select>
+                <span class="select-arrow">▼</span>
+                <div id="observeSelectedGuides" class="selected-options"></div>
+            </div>
+            
+            特殊关注点：<input type="text" id="observeFocus" placeholder="例如：幼儿的坚持性、合作能力、问题解决策略等"><br>
+            
+            <button class="generate-btn" onclick="generateObservePrompt()">生成观察分析提示词</button>
         </div>
 
-        <!-- 5. 行为分析 -->
+        <!-- 2. 行为分析 -->
         <div class="input-area">
             <h3>2. 行为分析</h3>
             幼儿行为：<textarea id="behaviorDetail" placeholder="例如：幼儿频繁抢夺同伴玩具，被阻止后哭闹"></textarea><br>
-            幼儿年龄：<input type="text" id="behaviorAge" placeholder="例如：4岁">
+            幼儿年龄：<input type="text" id="behaviorAge" placeholder="例如：4岁"><br>
+            
+            分析依据（可多选）：
+            <div class="select-wrapper">
+                <select id="behaviorGuides" class="multi-select" multiple>
+                    <option value="《3-6岁儿童学习与发展指南》">《3-6岁儿童学习与发展指南》</option>
+                    <option value="《幼儿园教育指导纲要》">《幼儿园教育指导纲要》</option>
+                    <option value="《幼儿园保育教育质量评估指南》">《幼儿园保育教育质量评估指南》</option>
+                </select>
+                <span class="select-arrow">▼</span>
+                <div id="behaviorSelectedGuides" class="selected-options"></div>
+            </div>
+            
             <button class="generate-btn" onclick="generateBehaviorPrompt()">生成提示词</button>
         </div>
 
-        <!-- 6. 幼儿图画分析 -->
+        <!-- 3. 幼儿图画分析 -->
         <div class="input-area">
             <h3>3. 图画分析</h3>
             图画内容：<textarea id="drawingContent" placeholder="例如：画面中有红色太阳，黑色线条的人，位于纸的左下角"></textarea><br>
@@ -212,7 +306,7 @@
             <button class="generate-btn" onclick="generateDrawingPrompt()">生成提示词</button>
         </div>
 
-        <!-- 7. 幼儿评语分析（修改后的版本） -->
+        <!-- 4. 期末评语生成 -->
         <div class="input-area">
             <h3>4. 期末评语生成</h3>
             <div class="two-columns">
@@ -244,7 +338,7 @@
 
     <!-- 3. 研究撰写标签页 -->
     <div id="research" class="tab-content">
-        <!-- 9. 幼儿园课题选题 -->
+        <!-- 1. 课题选题 -->
         <div class="input-area">
             <h3>1. 课题选题</h3>
             研究方向：<input type="text" id="topicDirection" placeholder="例如：户外活动、家园共育"><br>
@@ -259,7 +353,7 @@
             <button class="generate-btn" onclick="generateTopicPrompt()">生成提示词</button>
         </div>
 
-        <!-- 10. 幼儿园课题/论文撰写 -->
+        <!-- 2. 课题/论文撰写 -->
         <div class="input-area">
             <h3>2. 课题/论文撰写</h3>
             题目：<input type="text" id="paperTitle" placeholder="例如：小班幼儿自主进食习惯培养研究"><br>
@@ -276,36 +370,86 @@
 
     <!-- 4. 计划总结标签页 -->
     <div id="planning" class="tab-content">
-        <!-- 11. 计划 -->
+        <!-- 1. 计划 -->
         <div class="input-area">
             <h3>1. 计划</h3>
-            计划类型：<select id="planType">
-                <option value="">选择类型</option>
-                <option value="周计划">周计划</option>
-                <option value="月计划">月计划</option>
-                <option value="主题活动计划">主题活动计划</option>
-            </select><br>
-            主题/时间段：<input type="text" id="planTheme" placeholder="例如：春天主题、9月第一周"><br>
-            年龄段：<select id="planAge">
-                <option value="">选择年龄段</option>
-                <option value="小班">小班</option>
-                <option value="中班">中班</option>
-                <option value="大班">大班</option>
-            </select><br>
+            <div class="two-columns">
+                <div>
+                    您的身份：<input type="text" id="planIdentity" placeholder="例如：班主任、园长、教研组长"><br>
+                    班级：<input type="text" id="planClass" placeholder="例如：小一班、中二班、大三班"><br>
+                    学期：<input type="text" id="planSemester" placeholder="例如：2023-2024学年第一学期">
+                </div>
+                <div>
+                    计划类型：<input type="text" id="planType" placeholder="例如：周计划、月计划、主题活动计划、学期计划"><br>
+                    主题/时间段：<input type="text" id="planTheme" placeholder="例如：春天主题、9月第一周、开学季"><br>
+                    年龄段：<select id="planAge">
+                        <option value="">选择年龄段</option>
+                        <option value="小班（3-4岁）">小班（3-4岁）</option>
+                        <option value="中班（4-5岁）">中班（4-5岁）</option>
+                        <option value="大班（5-6岁）">大班（5-6岁）</option>
+                    </select>
+                </div>
+            </div>
+            
+            幼儿班级基本情况：<textarea id="classSituation" rows="3" placeholder="例如：本班共有幼儿25名，其中男孩13名，女孩12名，大部分幼儿适应能力较强，有3名幼儿刚转入"></textarea><br>
+            
+            主要计划内容（可多选）：
+            <div class="select-wrapper">
+                <select id="planContents" class="multi-select" multiple>
+                    <option value="德育教育">德育教育</option>
+                    <option value="保育教育">保育教育</option>
+                    <option value="安全教育">安全教育</option>
+                    <option value="户外自主游戏">户外自主游戏</option>
+                    <option value="家园共育">家园共育</option>
+                    <option value="区域活动">区域活动</option>
+                    <option value="主题教学活动">主题教学活动</option>
+                    <option value="环境创设">环境创设</option>
+                </select>
+                <span class="select-arrow">▼</span>
+                <div id="selectedPlanContents" class="selected-options"></div>
+            </div>
+            
+            特殊要求：<input type="text" id="planRequirements" placeholder="例如：突出游戏化教学、注重个体差异、结合节日活动"><br>
+            
             <button class="generate-btn" onclick="generatePlanPrompt()">生成提示词</button>
         </div>
 
-        <!-- 12. 总结 -->
+        <!-- 2. 总结 -->
         <div class="input-area">
             <h3>2. 总结</h3>
-            总结类型：<select id="summaryType">
-                <option value="">选择类型</option>
-                <option value="活动总结">活动总结</option>
-                <option value="月度总结">月度总结</option>
-                <option value="学期总结">学期总结</option>
-            </select><br>
-            内容范围：<textarea id="summaryContent" placeholder="例如：9月开展了3次家长开放日活动，幼儿出勤率95%"></textarea><br>
-            重点：<input type="text" id="summaryKey" placeholder="例如：成果、问题、改进方向"><br>
+            <div class="two-columns">
+                <div>
+                    您的身份：<input type="text" id="summaryIdentity" placeholder="例如：班主任、园长、教研组长"><br>
+                    班级：<input type="text" id="summaryClass" placeholder="例如：小一班、中二班、大三班"><br>
+                    学期：<input type="text" id="summarySemester" placeholder="例如：2023-2024学年第一学期">
+                </div>
+                <div>
+                    总结类型：<input type="text" id="summaryType" placeholder="例如：活动总结、月度总结、学期总结、课题总结"><br>
+                    总结时间段：<input type="text" id="summaryPeriod" placeholder="例如：2023年9月、国庆节主题活动期间"><br>
+                    字数要求：<input type="text" id="summaryWordCount" placeholder="例如：800字左右、1500字">
+                </div>
+            </div>
+            
+            需要总结的内容（可多选）：
+            <div class="select-wrapper">
+                <select id="summaryContents" class="multi-select" multiple>
+                    <option value="德育教育开展情况">德育教育开展情况</option>
+                    <option value="保育教育工作成效">保育教育工作成效</option>
+                    <option value="安全教育实施效果">安全教育实施效果</option>
+                    <option value="户外自主游戏开展情况">户外自主游戏开展情况</option>
+                    <option value="家园共育工作情况">家园共育工作情况</option>
+                    <option value="幼儿发展评估">幼儿发展评估</option>
+                    <option value="班级管理工作">班级管理工作</option>
+                    <option value="课题研究进展">课题研究进展</option>
+                </select>
+                <span class="select-arrow">▼</span>
+                <div id="selectedSummaryContents" class="selected-options"></div>
+            </div>
+            
+            主要工作内容：<textarea id="summaryWorkContent" rows="3" placeholder="例如：本月开展了3次家长开放日活动，组织了秋季主题教育活动，完成了幼儿发展评估"></textarea><br>
+            
+            重点：<input type="text" id="summaryKey" placeholder="例如：成果、问题、改进方向、幼儿发展变化"><br>
+            
             <button class="generate-btn" onclick="generateSummaryPrompt()">生成提示词</button>
         </div>
     </div>
@@ -319,6 +463,45 @@
     <p class="back-link"><a href="./index.md">返回首页</a></p>
 
     <script>
+        // 初始化多选下拉框显示
+        function initMultiSelect(selectId, displayId) {
+            const select = document.getElementById(selectId);
+            const display = document.getElementById(displayId);
+            
+            select.addEventListener('change', function() {
+                display.innerHTML = '';
+                const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
+                
+                selectedOptions.forEach(option => {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-option';
+                    tag.innerHTML = `${option} <span class="remove-option" data-value="${option}">×</span>`;
+                    display.appendChild(tag);
+                });
+                
+                // 添加删除选项的功能
+                document.querySelectorAll(`#${displayId} .remove-option`).forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const valueToRemove = this.getAttribute('data-value');
+                        // 取消对应选项的选中状态
+                        Array.from(select.options).forEach(option => {
+                            if (option.value === valueToRemove) {
+                                option.selected = false;
+                            }
+                        });
+                        // 重新触发change事件以更新显示
+                        select.dispatchEvent(new Event('change'));
+                    });
+                });
+            });
+        }
+        
+        // 初始化所有多选下拉框
+        initMultiSelect('observeGuides', 'observeSelectedGuides');
+        initMultiSelect('behaviorGuides', 'behaviorSelectedGuides');
+        initMultiSelect('planContents', 'selectedPlanContents');
+        initMultiSelect('summaryContents', 'selectedSummaryContents');
+
         // 标签页切换功能
         function openTab(evt, tabName) {
             var i, tabcontent, tabbuttons;
@@ -392,14 +575,30 @@
             scrollToResult();
         }
 
-        // 4. 观察记录
+        // 4. 观察记录（优化后）
         function generateObservePrompt() {
-            const activity = document.getElementById("observeActivity").value;
-            const behavior = document.getElementById("observeBehavior").value;
-            const goal = document.getElementById("observeGoal").value;
-            const prompt1 = `根据以下信息撰写幼儿观察记录：活动类型${activity}，幼儿表现${behavior}，观察目的是${goal}。记录需客观描述行为，并分析背后的发展意义。`;
-            const prompt2 = `帮我整理一份观察记录：在${activity}中，幼儿表现为${behavior}。请从${goal}角度分析，并提出后续支持策略，语言简洁专业。`;
-            const prompt3 = `作为资深幼儿教师，請根据以下信息撰写专业观察记录：在${activity}中，幼儿表现为${behavior}。请结合${goal}进行分析，指出发展特点并提供针对性指导建议，记录格式符合幼儿园档案要求。`;
+            // 获取基础信息
+            const object = document.getElementById("observeObject").value;
+            const age = document.getElementById("observeAge").value;
+            const date = document.getElementById("observeDate").value;
+            const scenario = document.getElementById("observeScenario").value;
+            const location = document.getElementById("observeLocation").value;
+            const duration = document.getElementById("observeDuration").value;
+            const content = document.getElementById("observeContent").value;
+            const purpose = document.getElementById("observePurpose").value;
+            const focus = document.getElementById("observeFocus").value;
+            
+            // 获取选中的分析依据
+            const guides = Array.from(document.getElementById("observeGuides").selectedOptions).map(option => option.value);
+            const guideText = guides.length > 0 ? guides.join("、") : "幼儿发展心理学理论";
+            
+            // 构建提示词
+            const prompt1 = `请根据以下信息撰写一份专业的幼儿观察分析报告：观察对象为${age}的${object}，于${date}在${location}的${scenario}中进行了${duration}的观察。观察到的内容包括：${content}。观察目的是${purpose}，请重点关注${focus}。分析时请以${guideText}为理论依据，客观描述行为表现，并分析其背后反映的发展特点和教育意义。`;
+            
+            const prompt2 = `作为资深幼儿教师，請对以下观察进行分析：${age}的${object}在${scenario}（地点：${location}，时间：${date}，时长：${duration}）中的表现为${content}。请围绕${purpose}展开分析，特别关注${focus}，并结合${guideText}中的相关内容，评估该幼儿的发展水平，指出其优势与待发展方面，并提出具体的教育支持策略。`;
+            
+            const prompt3 = `撰写一份符合幼儿园观察记录规范的分析报告：观察对象${object}（${age}）在${scenario}中的行为表现为${content}（观察地点：${location}，日期：${date}，时长：${duration}）。分析需包含：1. 客观行为描述；2. 基于${guideText}的发展水平评估；3. 针对${purpose}的深入分析；4. 关注${focus}的教育建议。报告应体现专业性和客观性，为后续教育提供参考依据。`;
+            
             document.getElementById("promptResult").innerHTML = `
                 <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
                 <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
@@ -412,9 +611,14 @@
         function generateBehaviorPrompt() {
             const detail = document.getElementById("behaviorDetail").value;
             const age = document.getElementById("behaviorAge").value;
-            const prompt1 = `分析${age}幼儿的以下行为：${detail}。请解释可能的原因，判断是否符合年龄特点，并给出教师干预建议。`;
-            const prompt2 = `幼儿（${age}）出现行为：${detail}。从发展心理学角度分析背后的需求，提供3个具体可操作的引导方法，避免惩罚性措施。`;
-            const prompt3 = `请以学前教育专家的视角分析${age}幼儿的行为：${detail}。结合该年龄段心理发展特点，解读行为背后的需求，提供符合正面管教理念的干预策略和家园沟通建议。`;
+            
+            // 获取选中的分析依据
+            const guides = Array.from(document.getElementById("behaviorGuides").selectedOptions).map(option => option.value);
+            const guideText = guides.length > 0 ? guides.join("、") : "幼儿发展心理学理论";
+            
+            const prompt1 = `分析${age}幼儿的以下行为：${detail}。请根据${guideText}解释可能的原因，判断是否符合年龄特点，并给出教师干预建议。`;
+            const prompt2 = `幼儿（${age}）出现行为：${detail}。请依据${guideText}从发展心理学角度分析背后的需求，提供3个具体可操作的引导方法，避免惩罚性措施。`;
+            const prompt3 = `请以学前教育专家的视角，根据${guideText}分析${age}幼儿的行为：${detail}。结合该年龄段心理发展特点，解读行为背后的需求，提供符合正面管教理念的干预策略和家园沟通建议。`;
             document.getElementById("promptResult").innerHTML = `
                 <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
                 <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
@@ -439,7 +643,7 @@
             scrollToResult();
         }
 
-        // 7. 幼儿评语生成（修改后的版本）
+        // 7. 幼儿评语生成
         function generateCommentPrompt() {
             const name = document.getElementById("childName").value;
             const gender = document.getElementById("childGender").value;
@@ -513,14 +717,27 @@
             scrollToResult();
         }
 
-        // 11. 计划
+        // 11. 计划（优化后）
         function generatePlanPrompt() {
+            const identity = document.getElementById("planIdentity").value;
+            const className = document.getElementById("planClass").value;
+            const semester = document.getElementById("planSemester").value;
             const type = document.getElementById("planType").value;
             const theme = document.getElementById("planTheme").value;
             const age = document.getElementById("planAge").value;
-            const prompt1 = `制定一份${age}的${type}，主题为${theme}。包含目标、具体安排、资源准备和评价方式，突出幼儿主体性，各环节衔接合理。`;
-            const prompt2 = `生成${theme}的${type}（适合${age}），涵盖健康、语言、社会等多个领域活动，注明每个活动的重点和家园配合要点，可操作性强。`;
-            const prompt3 = `请以幼儿园年级组长的身份，制定一份${age}的${type}，主题为${theme}。计划要体现领域渗透和生活化原则，活动安排符合幼儿年龄特点，包含观察评估要点和调整机制。`;
+            const situation = document.getElementById("classSituation").value;
+            const requirements = document.getElementById("planRequirements").value;
+            
+            // 获取选中的计划内容
+            const contents = Array.from(document.getElementById("planContents").selectedOptions).map(option => option.value);
+            const contentText = contents.length > 0 ? contents.join("、") : "各项教育教学工作";
+            
+            const prompt1 = `作为${identity}，请为${className}（${age}）制定一份${semester}的${type}，主题为${theme}。班级基本情况：${situation}。计划应包含${contentText}等内容，满足${requirements}要求，突出幼儿主体性，内容具体可行。`;
+            
+            const prompt2 = `生成${className}（${age}）在${semester}的${type}，主题为${theme}。我是${identity}，本班情况如下：${situation}。计划需涵盖${contentText}，并特别关注${requirements}，包含明确目标、具体措施、资源准备和评价方式，符合《3-6岁儿童学习与发展指南》要求。`;
+            
+            const prompt3 = `请以${identity}的视角，为${className}（${age}）设计${semester}的${type}，主题为${theme}。班级情况：${situation}。计划内容应包括${contentText}，并体现${requirements}理念，结构清晰，操作性强，兼顾幼儿全面发展和个体差异，同时考虑家园共育的有效实施。`;
+            
             document.getElementById("promptResult").innerHTML = `
                 <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
                 <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
@@ -529,14 +746,27 @@
             scrollToResult();
         }
 
-        // 12. 总结
+        // 12. 总结（优化后）
         function generateSummaryPrompt() {
+            const identity = document.getElementById("summaryIdentity").value;
+            const className = document.getElementById("summaryClass").value;
+            const semester = document.getElementById("summarySemester").value;
             const type = document.getElementById("summaryType").value;
-            const content = document.getElementById("summaryContent").value;
+            const period = document.getElementById("summaryPeriod").value;
+            const wordCount = document.getElementById("summaryWordCount").value;
+            const workContent = document.getElementById("summaryWorkContent").value;
             const key = document.getElementById("summaryKey").value;
-            const prompt1 = `撰写一份${type}，内容范围：${content}。重点突出${key}，结构包括成果、不足和改进计划，语言简洁客观，体现幼儿发展为本的理念。`;
-            const prompt2 = `总结${type}：${content}。围绕${key}展开，用数据和案例支撑，分析经验教训，提出下阶段具体目标，适合向园领导或家长汇报。`;
-            const prompt3 = `作为资深幼儿教师，請撰写一份${type}，内容范围为${content}。重点突出${key}，既要客观反映工作实效，又要体现对幼儿发展的关注，分析部分要有教育理论支撑，改进建议要具体可行。`;
+            
+            // 获取选中的总结内容
+            const contents = Array.from(document.getElementById("summaryContents").selectedOptions).map(option => option.value);
+            const contentText = contents.length > 0 ? contents.join("、") : "各项工作开展情况";
+            
+            const prompt1 = `作为${identity}，请撰写${className}在${semester}${period}的${type}，字数${wordCount}左右。主要工作内容包括：${workContent}。总结应涵盖${contentText}，重点突出${key}，结构包括工作成效、存在问题和改进措施，语言简洁客观。`;
+            
+            const prompt2 = `生成${className}${period}的${type}（${semester}），我是${identity}。本阶段主要工作：${workContent}。总结需包含${contentText}等方面，重点分析${key}，用具体数据和案例支撑，体现幼儿发展为本的理念，提出切实可行的改进建议，字数控制在${wordCount}。`;
+            
+            const prompt3 = `请以${identity}的身份，为${className}撰写${semester}${period}的${type}（${wordCount}）。工作内容：${workContent}。总结应围绕${contentText}展开，重点关注${key}，既客观反映工作成果，也深入分析存在问题，结合《幼儿园保育教育质量评估指南》提出下一阶段的工作思路和具体措施。`;
+            
             document.getElementById("promptResult").innerHTML = `
                 <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
                 <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
@@ -554,4 +784,3 @@
     </script>
 </body>
 </html>
-
