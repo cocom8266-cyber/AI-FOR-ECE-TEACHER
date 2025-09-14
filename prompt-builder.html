@@ -4,186 +4,345 @@
     <meta charset="UTF-8">
     <title>幼儿园提示词生成器</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; }
-        .input-area { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
-        input, textarea, select { width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .result { margin: 20px 0; padding: 15px; background-color: #f9f9f9; border-radius: 5px; }
-        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
-        h3 { color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 20px auto; 
+            padding: 0 20px; 
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 5px;
+            margin-bottom: -1px;
+        }
+        .tab-button.active {
+            background-color: white;
+            border-bottom: 3px solid #4CAF50;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        .input-area { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+        }
+        input, textarea, select { 
+            width: 100%; 
+            padding: 8px; 
+            margin: 10px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+        }
+        .two-columns {
+            display: flex;
+            gap: 10px;
+        }
+        .two-columns > div {
+            flex: 1;
+        }
+        .result { 
+            margin: 20px 0; 
+            padding: 15px; 
+            background-color: #f9f9f9; 
+            border-radius: 5px; 
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button.generate-btn { 
+            padding: 10px 20px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            transition: background-color 0.3s;
+        }
+        button.generate-btn:hover {
+            background-color: #45a049;
+        }
+        h3 { 
+            color: #333; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 5px; 
+        }
+        .prompt-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+        .prompt-item:last-child {
+            border-bottom: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .back-link {
+            margin-top: 30px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
     <h1>幼儿园提示词生成器</h1>
     <p>选择场景并填写信息，自动生成可用的提示词👇</p>
 
-    <!-- 1. 故事创作 -->
-    <div class="input-area">
-        <h3>1. 故事创作</h3>
-        主题：<input type="text" id="storyTheme" placeholder="例如：友谊、勇敢"><br>
-        年龄段：<select id="storyAge">
-            <option value="">选择年龄段</option>
-            <option value="小班（3-4岁）">小班（3-4岁）</option>
-            <option value="中班（4-5岁）">中班（4-5岁）</option>
-            <option value="大班（5-6岁）">大班（5-6岁）</option>
-        </select><br>
-        特殊要求：<input type="text" id="storyReq" placeholder="例如：加入动物角色、有重复句式"><br>
-        <button onclick="generateStoryPrompt()">生成提示词</button>
+    <!-- 标签页导航 -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'teaching')">教学相关</button>
+        <button class="tab-button" onclick="openTab(event, 'observation')">观察分析</button>
+        <button class="tab-button" onclick="openTab(event, 'research')">研究撰写</button>
+        <button class="tab-button" onclick="openTab(event, 'planning')">计划总结</button>
     </div>
 
-    <!-- 2. 教案设计 -->
-    <div class="input-area">
-        <h3>2. 教案设计</h3>
-        领域：<select id="lessonField">
-            <option value="">选择领域</option>
-            <option value="健康">健康</option>
-            <option value="语言">语言</option>
-            <option value="社会">社会</option>
-            <option value="科学">科学</option>
-            <option value="艺术">艺术</option>
-        </select><br>
-        主题：<input type="text" id="lessonTheme" placeholder="例如：认识秋天、礼貌用语"><br>
-        时长：<input type="text" id="lessonTime" placeholder="例如：15分钟、30分钟"><br>
-        年龄段：<select id="lessonAge">
-            <option value="">选择年龄段</option>
-            <option value="小班">小班</option>
-            <option value="中班">中班</option>
-            <option value="大班">大班</option>
-        </select><br>
-        <button onclick="generateLessonPrompt()">生成提示词</button>
+    <!-- 1. 教学相关标签页 -->
+    <div id="teaching" class="tab-content active">
+        <!-- 1. 故事创作 -->
+        <div class="input-area">
+            <h3>1. 故事创作</h3>
+            主题：<input type="text" id="storyTheme" placeholder="例如：友谊、勇敢"><br>
+            年龄段：<select id="storyAge">
+                <option value="">选择年龄段</option>
+                <option value="小班（3-4岁）">小班（3-4岁）</option>
+                <option value="中班（4-5岁）">中班（4-5岁）</option>
+                <option value="大班（5-6岁）">大班（5-6岁）</option>
+            </select><br>
+            特殊要求：<input type="text" id="storyReq" placeholder="例如：加入动物角色、有重复句式"><br>
+            <button class="generate-btn" onclick="generateStoryPrompt()">生成提示词</button>
+        </div>
+
+        <!-- 2. 教案设计 -->
+        <div class="input-area">
+            <h3>2. 教案设计</h3>
+            领域：<select id="lessonField">
+                <option value="">选择领域</option>
+                <option value="健康">健康</option>
+                <option value="语言">语言</option>
+                <option value="社会">社会</option>
+                <option value="科学">科学</option>
+                <option value="艺术">艺术</option>
+            </select><br>
+            主题：<input type="text" id="lessonTheme" placeholder="例如：认识秋天、礼貌用语"><br>
+            时长：<input type="text" id="lessonTime" placeholder="例如：15分钟、30分钟"><br>
+            年龄段：<select id="lessonAge">
+                <option value="">选择年龄段</option>
+                <option value="小班">小班</option>
+                <option value="中班">中班</option>
+                <option value="大班">大班</option>
+            </select><br>
+            <button class="generate-btn" onclick="generateLessonPrompt()">生成提示词</button>
+        </div>
+
+        <!-- 3. 诗歌创编 -->
+        <div class="input-area">
+            <h3>3. 诗歌创编</h3>
+            主题：<input type="text" id="poemTheme" placeholder="例如：春天、幼儿园"><br>
+            形式：<select id="poemForm">
+                <option value="">选择形式</option>
+                <option value="儿歌">儿歌（简短押韵）</option>
+                <option value="童谣">童谣（有节奏感）</option>
+                <option value="儿童诗">儿童诗（稍长）</option>
+            </select><br>
+            特殊要求：<input type="text" id="poemReq" placeholder="例如：每句5个字、加入拟声词"><br>
+            <button class="generate-btn" onclick="generatePoemPrompt()">生成提示词</button>
+        </div>
+
+        <!-- 8. 幼儿园教学PPT生成 -->
+        <div class="input-area">
+            <h3>4. 教学PPT生成</h3>
+            课题：<input type="text" id="pptTopic" placeholder="例如：认识昆虫、中秋节习俗"><br>
+            年龄段：<select id="pptAge">
+                <option value="">选择年龄段</option>
+                <option value="小班">小班</option>
+                <option value="中班">中班</option>
+                <option value="大班">大班</option>
+            </select><br>
+            页数：<input type="text" id="pptPages" placeholder="例如：8-10页"><br>
+            重点内容：<input type="text" id="pptKey" placeholder="例如：昆虫的3个特征、月饼的由来"><br>
+            <button class="generate-btn" onclick="generatePptPrompt()">生成提示词</button>
+        </div>
     </div>
 
-    <!-- 3. 诗歌创编 -->
-    <div class="input-area">
-        <h3>3. 诗歌创编</h3>
-        主题：<input type="text" id="poemTheme" placeholder="例如：春天、幼儿园"><br>
-        形式：<select id="poemForm">
-            <option value="">选择形式</option>
-            <option value="儿歌">儿歌（简短押韵）</option>
-            <option value="童谣">童谣（有节奏感）</option>
-            <option value="儿童诗">儿童诗（稍长）</option>
-        </select><br>
-        特殊要求：<input type="text" id="poemReq" placeholder="例如：每句5个字、加入拟声词"><br>
-        <button onclick="generatePoemPrompt()">生成提示词</button>
+    <!-- 2. 观察分析标签页 -->
+    <div id="observation" class="tab-content">
+        <!-- 4. 观察记录 -->
+        <div class="input-area">
+            <h3>1. 观察记录</h3>
+            活动类型：<input type="text" id="observeActivity" placeholder="例如：区域活动、户外活动"><br>
+            幼儿表现：<textarea id="observeBehavior" placeholder="例如：幼儿A在积木区搭建高塔，多次倒塌后仍继续尝试"></textarea><br>
+            观察目的：<input type="text" id="observeGoal" placeholder="例如：分析幼儿解决问题的能力"><br>
+            <button class="generate-btn" onclick="generateObservePrompt()">生成提示词</button>
+        </div>
+
+        <!-- 5. 行为分析 -->
+        <div class="input-area">
+            <h3>2. 行为分析</h3>
+            幼儿行为：<textarea id="behaviorDetail" placeholder="例如：幼儿频繁抢夺同伴玩具，被阻止后哭闹"></textarea><br>
+            幼儿年龄：<input type="text" id="behaviorAge" placeholder="例如：4岁">
+            <button class="generate-btn" onclick="generateBehaviorPrompt()">生成提示词</button>
+        </div>
+
+        <!-- 6. 幼儿图画分析 -->
+        <div class="input-area">
+            <h3>3. 图画分析</h3>
+            图画内容：<textarea id="drawingContent" placeholder="例如：画面中有红色太阳，黑色线条的人，位于纸的左下角"></textarea><br>
+            幼儿年龄：<input type="text" id="drawingAge" placeholder="例如：5岁"><br>
+            分析需求：<input type="text" id="drawingNeed" placeholder="例如：解读可能的心理状态、发展特点"><br>
+            <button class="generate-btn" onclick="generateDrawingPrompt()">生成提示词</button>
+        </div>
+
+        <!-- 7. 幼儿评语分析（修改后的版本） -->
+        <div class="input-area">
+            <h3>4. 期末评语生成</h3>
+            <div class="two-columns">
+                <div>
+                    幼儿姓名：<input type="text" id="childName" placeholder="例如：张明"><br>
+                    性别：<select id="childGender">
+                        <option value="">选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select><br>
+                    年龄：<input type="text" id="childAge" placeholder="例如：5岁3个月"><br>
+                </div>
+                <div>
+                    班级：<select id="childClass">
+                        <option value="">选择班级</option>
+                        <option value="小班">小班</option>
+                        <option value="中班">中班</option>
+                        <option value="大班">大班</option>
+                    </select><br>
+                    性格特点：<textarea id="childPersonality" placeholder="例如：活泼开朗，乐于助人，动手能力强，但注意力不够集中"></textarea><br>
+                    字数要求：<input type="text" id="commentWordCount" placeholder="例如：200字左右">
+                </div>
+            </div>
+            突出表现/进步：<input type="text" id="childStrengths" placeholder="例如：在语言表达、社交能力方面有明显进步"><br>
+            需要改进的方面：<input type="text" id="childImprovements" placeholder="例如：在集体活动中需要提高规则意识"><br>
+            <button class="generate-btn" onclick="generateCommentPrompt()">生成评语提示词</button>
+        </div>
     </div>
 
-    <!-- 4. 观察记录 -->
-    <div class="input-area">
-        <h3>4. 观察记录</h3>
-        活动类型：<input type="text" id="observeActivity" placeholder="例如：区域活动、户外活动"><br>
-        幼儿表现：<textarea id="observeBehavior" placeholder="例如：幼儿A在积木区搭建高塔，多次倒塌后仍继续尝试"></textarea><br>
-        观察目的：<input type="text" id="observeGoal" placeholder="例如：分析幼儿解决问题的能力"><br>
-        <button onclick="generateObservePrompt()">生成提示词</button>
+    <!-- 3. 研究撰写标签页 -->
+    <div id="research" class="tab-content">
+        <!-- 9. 幼儿园课题选题 -->
+        <div class="input-area">
+            <h3>1. 课题选题</h3>
+            研究方向：<input type="text" id="topicDirection" placeholder="例如：户外活动、家园共育"><br>
+            年龄段：<select id="topicAge">
+                <option value="">选择年龄段</option>
+                <option value="小班">小班</option>
+                <option value="中班">中班</option>
+                <option value="大班">大班</option>
+                <option value="全园">全园</option>
+            </select><br>
+            特殊要求：<input type="text" id="topicReq" placeholder="例如：适合新手教师、结合本地特色"><br>
+            <button class="generate-btn" onclick="generateTopicPrompt()">生成提示词</button>
+        </div>
+
+        <!-- 10. 幼儿园课题/论文撰写 -->
+        <div class="input-area">
+            <h3>2. 课题/论文撰写</h3>
+            题目：<input type="text" id="paperTitle" placeholder="例如：小班幼儿自主进食习惯培养研究"><br>
+            需求：<select id="paperNeed">
+                <option value="">选择需求</option>
+                <option value="框架">构建写作框架</option>
+                <option value="引言">撰写引言部分</option>
+                <option value="案例分析">补充案例分析</option>
+            </select><br>
+            字数要求：<input type="text" id="paperWords" placeholder="例如：2000字、500字引言"><br>
+            <button class="generate-btn" onclick="generatePaperPrompt()">生成提示词</button>
+        </div>
     </div>
 
-    <!-- 5. 行为分析 -->
-    <div class="input-area">
-        <h3>5. 行为分析</h3>
-        幼儿行为：<textarea id="behaviorDetail" placeholder="例如：幼儿频繁抢夺同伴玩具，被阻止后哭闹"></textarea><br>
-        幼儿年龄：<input type="text" id="behaviorAge" placeholder="例如：4岁">
-        <button onclick="generateBehaviorPrompt()">生成提示词</button>
-    </div>
+    <!-- 4. 计划总结标签页 -->
+    <div id="planning" class="tab-content">
+        <!-- 11. 计划 -->
+        <div class="input-area">
+            <h3>1. 计划</h3>
+            计划类型：<select id="planType">
+                <option value="">选择类型</option>
+                <option value="周计划">周计划</option>
+                <option value="月计划">月计划</option>
+                <option value="主题活动计划">主题活动计划</option>
+            </select><br>
+            主题/时间段：<input type="text" id="planTheme" placeholder="例如：春天主题、9月第一周"><br>
+            年龄段：<select id="planAge">
+                <option value="">选择年龄段</option>
+                <option value="小班">小班</option>
+                <option value="中班">中班</option>
+                <option value="大班">大班</option>
+            </select><br>
+            <button class="generate-btn" onclick="generatePlanPrompt()">生成提示词</button>
+        </div>
 
-    <!-- 6. 幼儿图画分析 -->
-    <div class="input-area">
-        <h3>6. 幼儿图画分析</h3>
-        图画内容：<textarea id="drawingContent" placeholder="例如：画面中有红色太阳，黑色线条的人，位于纸的左下角"></textarea><br>
-        幼儿年龄：<input type="text" id="drawingAge" placeholder="例如：5岁"><br>
-        分析需求：<input type="text" id="drawingNeed" placeholder="例如：解读可能的心理状态、发展特点"><br>
-        <button onclick="generateDrawingPrompt()">生成提示词</button>
-    </div>
-
-    <!-- 7. 幼儿评语分析 -->
-    <div class="input-area">
-        <h3>7. 幼儿评语分析</h3>
-        现有评语：<textarea id="commentContent" placeholder="例如：幼儿活泼好动，参与活动积极，但注意力持续时间短"></textarea><br>
-        分析需求：<input type="text" id="commentNeed" placeholder="例如：优化措辞、补充发展建议"><br>
-        <button onclick="generateCommentPrompt()">生成提示词</button>
-    </div>
-
-    <!-- 8. 幼儿园教学PPT生成 -->
-    <div class="input-area">
-        <h3>8. 幼儿园教学PPT生成</h3>
-        课题：<input type="text" id="pptTopic" placeholder="例如：认识昆虫、中秋节习俗"><br>
-        年龄段：<select id="pptAge">
-            <option value="">选择年龄段</option>
-            <option value="小班">小班</option>
-            <option value="中班">中班</option>
-            <option value="大班">大班</option>
-        </select><br>
-        页数：<input type="text" id="pptPages" placeholder="例如：8-10页"><br>
-        重点内容：<input type="text" id="pptKey" placeholder="例如：昆虫的3个特征、月饼的由来"><br>
-        <button onclick="generatePptPrompt()">生成提示词</button>
-    </div>
-
-    <!-- 9. 幼儿园课题选题 -->
-    <div class="input-area">
-        <h3>9. 幼儿园课题选题</h3>
-        研究方向：<input type="text" id="topicDirection" placeholder="例如：户外活动、家园共育"><br>
-        年龄段：<select id="topicAge">
-            <option value="">选择年龄段</option>
-            <option value="小班">小班</option>
-            <option value="中班">中班</option>
-            <option value="大班">大班</option>
-            <option value="全园">全园</option>
-        </select><br>
-        特殊要求：<input type="text" id="topicReq" placeholder="例如：适合新手教师、结合本地特色"><br>
-        <button onclick="generateTopicPrompt()">生成提示词</button>
-    </div>
-
-    <!-- 10. 幼儿园课题/论文撰写 -->
-    <div class="input-area">
-        <h3>10. 幼儿园课题/论文撰写</h3>
-        题目：<input type="text" id="paperTitle" placeholder="例如：小班幼儿自主进食习惯培养研究"><br>
-        需求：<select id="paperNeed">
-            <option value="">选择需求</option>
-            <option value="框架">构建写作框架</option>
-            <option value="引言">撰写引言部分</option>
-            <option value="案例分析">补充案例分析</option>
-        </select><br>
-        字数要求：<input type="text" id="paperWords" placeholder="例如：2000字、500字引言"><br>
-        <button onclick="generatePaperPrompt()">生成提示词</button>
-    </div>
-
-    <!-- 11. 计划 -->
-    <div class="input-area">
-        <h3>11. 计划</h3>
-        计划类型：<select id="planType">
-            <option value="">选择类型</option>
-            <option value="周计划">周计划</option>
-            <option value="月计划">月计划</option>
-            <option value="主题活动计划">主题活动计划</option>
-        </select><br>
-        主题/时间段：<input type="text" id="planTheme" placeholder="例如：春天主题、9月第一周"><br>
-        年龄段：<select id="planAge">
-            <option value="">选择年龄段</option>
-            <option value="小班">小班</option>
-            <option value="中班">中班</option>
-            <option value="大班">大班</option>
-        </select><br>
-        <button onclick="generatePlanPrompt()">生成提示词</button>
-    </div>
-
-    <!-- 12. 总结 -->
-    <div class="input-area">
-        <h3>12. 总结</h3>
-        总结类型：<select id="summaryType">
-            <option value="">选择类型</option>
-            <option value="活动总结">活动总结</option>
-            <option value="月度总结">月度总结</option>
-            <option value="学期总结">学期总结</option>
-        </select><br>
-        内容范围：<textarea id="summaryContent" placeholder="例如：9月开展了3次家长开放日活动，幼儿出勤率95%"></textarea><br>
-        重点：<input type="text" id="summaryKey" placeholder="例如：成果、问题、改进方向"><br>
-        <button onclick="generateSummaryPrompt()">生成提示词</button>
+        <!-- 12. 总结 -->
+        <div class="input-area">
+            <h3>2. 总结</h3>
+            总结类型：<select id="summaryType">
+                <option value="">选择类型</option>
+                <option value="活动总结">活动总结</option>
+                <option value="月度总结">月度总结</option>
+                <option value="学期总结">学期总结</option>
+            </select><br>
+            内容范围：<textarea id="summaryContent" placeholder="例如：9月开展了3次家长开放日活动，幼儿出勤率95%"></textarea><br>
+            重点：<input type="text" id="summaryKey" placeholder="例如：成果、问题、改进方向"><br>
+            <button class="generate-btn" onclick="generateSummaryPrompt()">生成提示词</button>
+        </div>
     </div>
 
     <!-- 生成的提示词结果 -->
     <div class="result">
         <h3>生成的提示词：</h3>
-        <p id="promptResult" style="white-space: pre-line;"></p>
+        <div id="promptResult" style="white-space: pre-line;"></div>
     </div>
 
+    <p class="back-link"><a href="./index.md">返回首页</a></p>
+
     <script>
+        // 标签页切换功能
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            
+            // 隐藏所有标签内容
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            // 移除所有标签按钮的活跃状态
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            
+            // 显示当前标签内容并激活当前标签按钮
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // 滚动到页面顶部
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
         // 1. 故事创作
         function generateStoryPrompt() {
             const theme = document.getElementById("storyTheme").value;
@@ -192,7 +351,12 @@
             const prompt1 = `请为${age}幼儿创作一个关于${theme}的故事，语言简单易懂，句子简短，加入${req}，结局温暖积极，适合老师讲述。`;
             const prompt2 = `我需要一个给${age}孩子的小故事，主题是${theme}，主角可以是${req}，包含1-2个简单对话，帮助幼儿理解${theme}的意义。`;
             const prompt3 = `作为一名有10年经验的幼儿园老师，請为${age}幼儿设计一个关于${theme}的故事，要符合该年龄段幼儿的认知特点，融入${req}，故事中蕴含简单的生活道理，便于集体教学时使用。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 2. 教案设计
@@ -204,7 +368,12 @@
             const prompt1 = `设计一个适合${age}的${field}领域教案，主题是${theme}，时长${time}，包含活动目标、准备材料、详细步骤和延伸活动，步骤要具体可操作。`;
             const prompt2 = `写一个${theme}的${field}活动方案（适合${age}），突出幼儿动手参与环节，时长${time}，注明安全注意事项和家园共育建议。`;
             const prompt3 = `作为学前教育专家，请根据《3-6岁儿童学习与发展指南》设计一份${age}${field}领域教案，主题为${theme}，时长${time}，要体现游戏化教学理念，活动设计具有层次性和趣味性。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 3. 诗歌创编
@@ -215,7 +384,12 @@
             const prompt1 = `创作一首关于${theme}的${form}，语言简单口语化，适合幼儿朗诵，符合${req}要求，内容积极健康。`;
             const prompt2 = `为幼儿园孩子写一首${form}，主题是${theme}，加入${req}，每句长度相近，读起来有节奏感，能帮助幼儿理解${theme}的特点。`;
             const prompt3 = `请以幼儿园老师的身份创作一首关于${theme}的${form}，要适合幼儿集体诵读，融入${req}，语言充满童趣，便于配合肢体动作进行表演。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 4. 观察记录
@@ -226,7 +400,12 @@
             const prompt1 = `根据以下信息撰写幼儿观察记录：活动类型${activity}，幼儿表现${behavior}，观察目的是${goal}。记录需客观描述行为，并分析背后的发展意义。`;
             const prompt2 = `帮我整理一份观察记录：在${activity}中，幼儿表现为${behavior}。请从${goal}角度分析，并提出后续支持策略，语言简洁专业。`;
             const prompt3 = `作为资深幼儿教师，請根据以下信息撰写专业观察记录：在${activity}中，幼儿表现为${behavior}。请结合${goal}进行分析，指出发展特点并提供针对性指导建议，记录格式符合幼儿园档案要求。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 5. 行为分析
@@ -236,7 +415,12 @@
             const prompt1 = `分析${age}幼儿的以下行为：${detail}。请解释可能的原因，判断是否符合年龄特点，并给出教师干预建议。`;
             const prompt2 = `幼儿（${age}）出现行为：${detail}。从发展心理学角度分析背后的需求，提供3个具体可操作的引导方法，避免惩罚性措施。`;
             const prompt3 = `请以学前教育专家的视角分析${age}幼儿的行为：${detail}。结合该年龄段心理发展特点，解读行为背后的需求，提供符合正面管教理念的干预策略和家园沟通建议。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 6. 幼儿图画分析
@@ -247,17 +431,37 @@
             const prompt1 = `分析${age}幼儿的图画：${content}。请从${need}角度解读，结合幼儿绘画发展特点，给出客观分析和教育建议。`;
             const prompt2 = `解读幼儿（${age}）的这幅画：${content}。重点分析${need}，说明可能的象征意义，避免过度解读，提供与幼儿沟通的话题建议。`;
             const prompt3 = `作为有丰富经验的幼儿园美术教师，請分析${age}幼儿的这幅画：${content}。从${need}角度出发，结合幼儿绘画发展阶段特点进行解读，并提供如何通过绘画活动促进该幼儿发展的具体建议。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
-        // 7. 幼儿评语分析
+        // 7. 幼儿评语生成（修改后的版本）
         function generateCommentPrompt() {
-            const content = document.getElementById("commentContent").value;
-            const need = document.getElementById("commentNeed").value;
-            const prompt1 = `分析这段幼儿评语：${content}。根据需求${need}进行优化，使语言更亲切具体，突出幼儿个性，同时保持专业性。`;
-            const prompt2 = `针对评语“${content}”，请从${need}角度改进，补充具体案例支撑，让家长更清晰了解幼儿情况，增加鼓励性语句。`;
-            const prompt3 = `请以幼儿园班主任的身份优化这段幼儿评语：${content}。按照${need}的要求，使评语既体现专业性又充满温度，既肯定进步又指出发展方向，让家长感受到老师的用心观察。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            const name = document.getElementById("childName").value;
+            const gender = document.getElementById("childGender").value;
+            const age = document.getElementById("childAge").value;
+            const className = document.getElementById("childClass").value;
+            const personality = document.getElementById("childPersonality").value;
+            const wordCount = document.getElementById("commentWordCount").value;
+            const strengths = document.getElementById("childStrengths").value;
+            const improvements = document.getElementById("childImprovements").value;
+            
+            const prompt1 = `请为${className}${age}的${gender}孩${name}撰写期末评语，该幼儿性格${personality}。评语要突出其${strengths}，同时委婉指出${improvements}需要改进。字数控制在${wordCount}，语言亲切温暖，多用鼓励性语句，适合家园沟通。`;
+            
+            const prompt2 = `作为资深幼儿园教师，为${className}幼儿${name}（${gender}，${age}）撰写期末评语。该幼儿的性格特点是${personality}，在${strengths}方面表现突出。评语需包含2-3个具体事例，针对${improvements}提出发展建议，字数${wordCount}左右，风格既要专业又要充满温度。`;
+            
+            const prompt3 = `撰写一份${className}${gender}孩${name}（${age}）的期末评语：该幼儿性格${personality}，本学期在${strengths}方面有明显进步。评语结构应包括：1. 整体表现；2. 具体进步事例；3. ${improvements}的发展建议；4. 未来期望。控制在${wordCount}，语言符合幼儿年龄特点，让家长能清晰了解孩子情况并获得具体指导。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 8. 幼儿园教学PPT生成
@@ -269,7 +473,12 @@
             const prompt1 = `设计一个幼儿园${age}的${topic}教学PPT大纲，共${pages}。包含封面、目录、核心内容（突出${key}）、互动环节和结束页，每页注明内容要点和配图建议。`;
             const prompt2 = `生成${topic}的教学PPT内容（适合${age}），共${pages}，重点呈现${key}。内容简洁图文结合，每页文字不超过20字，提供动画和过渡效果建议。`;
             const prompt3 = `作为幼儿园一线教师，請设计一份${age}${topic}教学PPT的完整框架，共${pages}页。要突出${key}，内容设计符合该年龄段幼儿注意力特点，包含可互动的提问和游戏环节，注明每页的教学意图。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 9. 幼儿园课题选题
@@ -280,7 +489,12 @@
             const prompt1 = `推荐3个${age}幼儿的${direction}方向研究课题，符合${req}要求，选题要具体可行，有实践意义，并说明每个课题的研究价值。`;
             const prompt2 = `围绕${direction}（针对${age}）生成研究课题，需满足${req}，每个课题附研究思路和预期成果，适合幼儿园教师开展行动研究。`;
             const prompt3 = `请以学前教育研究员的身份，为${age}幼儿的${direction}领域推荐3个研究课题，要符合${req}，选题应贴近幼儿园实际工作，具有研究价值和可操作性，并说明研究的切入点。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 10. 幼儿园课题/论文撰写
@@ -291,7 +505,12 @@
             const prompt1 = `帮我撰写《${title}》的${need}，字数${words}。内容结合幼儿园实践，引用1-2个相关理论，结构清晰，语言学术化但避免晦涩。`;
             const prompt2 = `针对《${title}》，完成${need}部分（${words}）。需包含具体案例数据，分析实践中的问题，提出可操作的对策，符合幼儿教育研究规范。`;
             const prompt3 = `作为有课题研究经验的幼儿园园长，请撰写《${title}》的${need}部分，字数${words}。内容要理论联系实际，既有学术性又有实践指导意义，特别要结合幼儿园一线工作案例进行阐述。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 11. 计划
@@ -302,7 +521,12 @@
             const prompt1 = `制定一份${age}的${type}，主题为${theme}。包含目标、具体安排、资源准备和评价方式，突出幼儿主体性，各环节衔接合理。`;
             const prompt2 = `生成${theme}的${type}（适合${age}），涵盖健康、语言、社会等多个领域活动，注明每个活动的重点和家园配合要点，可操作性强。`;
             const prompt3 = `请以幼儿园年级组长的身份，制定一份${age}的${type}，主题为${theme}。计划要体现领域渗透和生活化原则，活动安排符合幼儿年龄特点，包含观察评估要点和调整机制。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
         }
 
         // 12. 总结
@@ -313,10 +537,21 @@
             const prompt1 = `撰写一份${type}，内容范围：${content}。重点突出${key}，结构包括成果、不足和改进计划，语言简洁客观，体现幼儿发展为本的理念。`;
             const prompt2 = `总结${type}：${content}。围绕${key}展开，用数据和案例支撑，分析经验教训，提出下阶段具体目标，适合向园领导或家长汇报。`;
             const prompt3 = `作为资深幼儿教师，請撰写一份${type}，内容范围为${content}。重点突出${key}，既要客观反映工作实效，又要体现对幼儿发展的关注，分析部分要有教育理论支撑，改进建议要具体可行。`;
-            document.getElementById("promptResult").innerHTML = `提示词1：${prompt1}\n\n提示词2：${prompt2}\n\n提示词3：${prompt3}`;
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 滚动到结果区域
+        function scrollToResult() {
+            document.querySelector('.result').scrollIntoView({
+                behavior: 'smooth'
+            });
         }
     </script>
-
-    <p><a href="./index.md">返回首页</a></p>
 </body>
 </html>
+
