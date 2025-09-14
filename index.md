@@ -6,7 +6,7 @@
 
 - [一、常见应用场景](./scenarios.md)
 - [二、AI工具选择表](./tools.md)
-- [三、提示词模板库](./prompts.md)
+- [三、提示词模板库](./prompt-builder.html)
 - [四、安全审查清单](./safety.md)
 - [五、成功案例库](./caselib.md)
 
