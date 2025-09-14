@@ -160,6 +160,8 @@
         <button class="tab-button" onclick="openTab(event, 'observation')">观察分析</button>
         <button class="tab-button" onclick="openTab(event, 'research')">研究撰写</button>
         <button class="tab-button" onclick="openTab(event, 'planning')">计划总结</button>
+        <button class="tab-button" onclick="openTab(event, 'family')">家园共育</button>
+        <button class="tab-button" onclick="openTab(event, 'resources')">资源制作</button>
     </div>
 
     <!-- 1. 教学相关标签页 -->
@@ -232,7 +234,7 @@
 
     <!-- 2. 观察分析标签页 -->
     <div id="observation" class="tab-content">
-        <!-- 1. 观察记录（优化后） -->
+        <!-- 1. 观察记录 -->
         <div class="input-area">
             <h3>1. 观察记录与分析</h3>
             
@@ -454,6 +456,165 @@
         </div>
     </div>
 
+    <!-- 5. 家园共育 AI 应用标签页 -->
+    <div id="family" class="tab-content">
+        <!-- 1. 家长沟通话术生成 -->
+        <div class="input-area">
+            <h3>1. 家长沟通话术生成</h3>
+            沟通主题：<select id="communicationTopic">
+                <option value="">选择沟通主题</option>
+                <option value="挑食问题">挑食问题</option>
+                <option value="分离焦虑">分离焦虑</option>
+                <option value="行为习惯">行为习惯</option>
+                <option value="社交问题">社交问题</option>
+                <option value="学习发展">学习发展</option>
+                <option value="安全问题">安全问题</option>
+                <option value="其他问题">其他问题</option>
+            </select><br>
+            具体情况：<textarea id="communicationDetails" placeholder="例如：幼儿在园就餐时只吃白米饭，拒绝所有蔬菜，已有两周时间"></textarea><br>
+            沟通目的：<input type="text" id="communicationPurpose" placeholder="例如：寻求家长配合，共同改善幼儿饮食习惯"><br>
+            沟通方式：<select id="communicationMethod">
+                <option value="">选择沟通方式</option>
+                <option value="面对面沟通">面对面沟通</option>
+                <option value="电话沟通">电话沟通</option>
+                <option value="微信/文字沟通">微信/文字沟通</option>
+                <option value="家访沟通">家访沟通</option>
+            </select><br>
+            <button class="generate-btn" onclick="generateCommunicationPrompt()">生成沟通话术</button>
+        </div>
+
+        <!-- 2. 亲子活动方案生成 -->
+        <div class="input-area">
+            <h3>2. 亲子活动方案生成</h3>
+            活动主题：<input type="text" id="activityTheme" placeholder="例如：春天、中秋节、环保"><br>
+            结合因素：<select id="activityFactor">
+                <option value="">选择结合因素</option>
+                <option value="传统节日">传统节日</option>
+                <option value="季节特征">季节特征</option>
+                <option value="教育主题">教育主题</option>
+                <option value="幼儿兴趣">幼儿兴趣</option>
+            </select><br>
+            活动类型：<select id="activityType">
+                <option value="">选择活动类型</option>
+                <option value="亲子游戏">亲子游戏</option>
+                <option value="手工制作">手工制作</option>
+                <option value="户外探索">户外探索</option>
+                <option value="阅读活动">阅读活动</option>
+                <option value="科学小实验">科学小实验</option>
+            </select><br>
+            年龄段：<select id="activityAge">
+                <option value="">选择年龄段</option>
+                <option value="小班（3-4岁）">小班（3-4岁）</option>
+                <option value="中班（4-5岁）">中班（4-5岁）</option>
+                <option value="大班（5-6岁）">大班（5-6岁）</option>
+            </select><br>
+            时长：<input type="text" id="activityDuration" placeholder="例如：30分钟、1小时"><br>
+            <button class="generate-btn" onclick="generateActivityPrompt()">生成亲子活动方案</button>
+        </div>
+
+        <!-- 3. 家长科普内容创作 -->
+        <div class="input-area">
+            <h3>3. 家长科普内容创作</h3>
+            科普主题：<input type="text" id="scienceTopic" placeholder="例如：如何用AI辅助亲子阅读、幼儿情绪管理"><br>
+            内容形式：<select id="scienceFormat">
+                <option value="">选择内容形式</option>
+                <option value="图文指南">图文指南</option>
+                <option value="科普短文">科普短文</option>
+                <option value="问答手册">问答手册</option>
+                <option value="小贴士">小贴士</option>
+            </select><br>
+            目标读者：<select id="scienceAudience">
+                <option value="">选择目标读者</option>
+                <option value="小班幼儿家长">小班幼儿家长</option>
+                <option value="中班幼儿家长">中班幼儿家长</option>
+                <option value="大班幼儿家长">大班幼儿家长</option>
+                <option value="全体家长">全体家长</option>
+            </select><br>
+            重点内容：<input type="text" id="scienceFocus" placeholder="例如：方法步骤、注意事项、常见误区"><br>
+            <button class="generate-btn" onclick="generateSciencePrompt()">生成科普内容</button>
+        </div>
+    </div>
+
+    <!-- 6. 资源快速制作工具标签页 -->
+    <div id="resources" class="tab-content">
+        <!-- 1. 教具设计生成 -->
+        <div class="input-area">
+            <h3>1. 教具设计生成</h3>
+            教具类型：<input type="text" id="teachingAidType" placeholder="例如：数字配对卡片、垃圾分类教具、故事拼图"><br>
+            适用领域：<select id="teachingAidField">
+                <option value="">选择适用领域</option>
+                <option value="数学认知">数学认知</option>
+                <option value="语言发展">语言发展</option>
+                <option value="科学探究">科学探究</option>
+                <option value="社会认知">社会认知</option>
+                <option value="艺术创造">艺术创造</option>
+            </select><br>
+            年龄段：<select id="teachingAidAge">
+                <option value="">选择年龄段</option>
+                <option value="小班（3-4岁）">小班（3-4岁）</option>
+                <option value="中班（4-5岁）">中班（4-5岁）</option>
+                <option value="大班（5-6岁）">大班（5-6岁）</option>
+            </select><br>
+            制作材料：<input type="text" id="teachingAidMaterials" placeholder="例如：卡纸、剪刀、彩笔、旧报纸（可留空）"><br>
+            教育目标：<input type="text" id="teachingAidGoal" placeholder="例如：认识数字1-10、理解分类概念"><br>
+            <button class="generate-btn" onclick="generateTeachingAidPrompt()">生成教具制作步骤</button>
+        </div>
+
+        <!-- 2. 环境布置素材 -->
+        <div class="input-area">
+            <h3>2. 环境布置素材</h3>
+            布置区域：<select id="decorArea">
+                <option value="">选择布置区域</option>
+                <option value="班级主题墙">班级主题墙</option>
+                <option value="阅读区">阅读区</option>
+                <option value="建构区">建构区</option>
+                <option value="美工区">美工区</option>
+                <option value="角色扮演区">角色扮演区</option>
+                <option value="走廊">走廊</option>
+                <option value="盥洗室">盥洗室</option>
+            </select><br>
+            素材类型：<select id="decorType">
+                <option value="">选择素材类型</option>
+                <option value="区角标语">区角标语</option>
+                <option value="规则图示">规则图示</option>
+                <option value="主题文字">主题文字</option>
+                <option value="温馨提示">温馨提示</option>
+                <option value="幼儿作品展示说明">幼儿作品展示说明</option>
+            </select><br>
+            主题风格：<input type="text" id="decorStyle" placeholder="例如：卡通、自然、简约、节日主题"><br>
+            字数要求：<input type="text" id="decorWordCount" placeholder="例如：简短精炼、每句不超过10字"><br>
+            <button class="generate-btn" onclick="generateDecorPrompt()">生成环境布置文字</button>
+        </div>
+
+        <!-- 3. 活动素材包 -->
+        <div class="input-area">
+            <h3>3. 活动素材包</h3>
+            主题：<input type="text" id="materialTheme" placeholder="例如：动物主题、春天主题、中秋节"><br>
+            年龄段：<select id="materialAge">
+                <option value="">选择年龄段</option>
+                <option value="小班（3-4岁）">小班（3-4岁）</option>
+                <option value="中班（4-5岁）">中班（4-5岁）</option>
+                <option value="大班（5-6岁）">大班（5-6岁）</option>
+            </select><br>
+            包含内容（可多选）：
+            <div class="select-wrapper">
+                <select id="materialContents" class="multi-select" multiple>
+                    <option value="儿歌">儿歌</option>
+                    <option value="故事">故事</option>
+                    <option value="手工活动">手工活动</option>
+                    <option value="游戏">游戏</option>
+                    <option value="简笔画教程">简笔画教程</option>
+                    <option value="手指谣">手指谣</option>
+                    <option value="教学提问设计">教学提问设计</option>
+                </select>
+                <span class="select-arrow">▼</span>
+                <div id="selectedMaterialContents" class="selected-options"></div>
+            </div>
+            应用场景：<input type="text" id="materialScenario" placeholder="例如：晨间活动、区域活动、主题教学"><br>
+            <button class="generate-btn" onclick="generateMaterialPrompt()">生成活动素材包</button>
+        </div>
+    </div>
+
     <!-- 生成的提示词结果 -->
     <div class="result">
         <h3>生成的提示词：</h3>
@@ -501,6 +662,7 @@
         initMultiSelect('behaviorGuides', 'behaviorSelectedGuides');
         initMultiSelect('planContents', 'selectedPlanContents');
         initMultiSelect('summaryContents', 'selectedSummaryContents');
+        initMultiSelect('materialContents', 'selectedMaterialContents');
 
         // 标签页切换功能
         function openTab(evt, tabName) {
@@ -575,7 +737,7 @@
             scrollToResult();
         }
 
-        // 4. 观察记录（优化后）
+        // 4. 观察记录
         function generateObservePrompt() {
             // 获取基础信息
             const object = document.getElementById("observeObject").value;
@@ -717,7 +879,7 @@
             scrollToResult();
         }
 
-        // 11. 计划（优化后）
+        // 11. 计划
         function generatePlanPrompt() {
             const identity = document.getElementById("planIdentity").value;
             const className = document.getElementById("planClass").value;
@@ -746,7 +908,7 @@
             scrollToResult();
         }
 
-        // 12. 总结（优化后）
+        // 12. 总结
         function generateSummaryPrompt() {
             const identity = document.getElementById("summaryIdentity").value;
             const className = document.getElementById("summaryClass").value;
@@ -766,6 +928,137 @@
             const prompt2 = `生成${className}${period}的${type}（${semester}），我是${identity}。本阶段主要工作：${workContent}。总结需包含${contentText}等方面，重点分析${key}，用具体数据和案例支撑，体现幼儿发展为本的理念，提出切实可行的改进建议，字数控制在${wordCount}。`;
             
             const prompt3 = `请以${identity}的身份，为${className}撰写${semester}${period}的${type}（${wordCount}）。工作内容：${workContent}。总结应围绕${contentText}展开，重点关注${key}，既客观反映工作成果，也深入分析存在问题，结合《幼儿园保育教育质量评估指南》提出下一阶段的工作思路和具体措施。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 13. 家长沟通话术生成
+        function generateCommunicationPrompt() {
+            const topic = document.getElementById("communicationTopic").value;
+            const details = document.getElementById("communicationDetails").value;
+            const purpose = document.getElementById("communicationPurpose").value;
+            const method = document.getElementById("communicationMethod").value;
+            
+            const prompt1 = `生成与家长沟通${topic}的话术，具体情况如下：${details}。沟通目的是${purpose}，采用${method}方式。话术应专业、真诚、有同理心，避免指责，提供具体可行的建议，促进家园共育。`;
+            
+            const prompt2 = `作为有经验的幼儿园教师，需要与家长沟通${topic}问题。情况描述：${details}。沟通目标是${purpose}，通过${method}进行。请设计一套完整的沟通话术，包括开场、问题说明、原因分析、建议措施和结束语，语气亲切专业，让家长感受到合作的诚意。`;
+            
+            const prompt3 = `针对${topic}问题，撰写与家长的沟通内容（${method}方式）。具体情况：${details}。希望达成${purpose}的效果。内容应包括：1. 客观描述事实；2. 分析可能原因；3. 幼儿园的做法；4. 家长可配合的建议；5. 后续观察重点。语言得体，体现专业性和合作态度。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 14. 亲子活动方案生成
+        function generateActivityPrompt() {
+            const theme = document.getElementById("activityTheme").value;
+            const factor = document.getElementById("activityFactor").value;
+            const type = document.getElementById("activityType").value;
+            const age = document.getElementById("activityAge").value;
+            const duration = document.getElementById("activityDuration").value;
+            
+            const prompt1 = `设计一个以${theme}为主题的亲子${type}方案，结合${factor}特点，适合${age}幼儿及其家长参与，活动时长${duration}。方案应包括活动目标、准备材料、详细步骤、指导要点和延伸建议，操作简单安全，趣味性强。`;
+            
+            const prompt2 = `生成适合${age}的${theme}主题亲子${type}活动方案，结合${factor}设计，时长${duration}。内容需包含：活动名称、设计意图、准备物品、亲子互动步骤、观察要点和安全提示，步骤清晰，便于家长在家中操作，促进亲子关系和幼儿发展。`;
+            
+            const prompt3 = `作为幼儿教育专家，设计一个${age}幼儿的${theme}亲子${type}活动（结合${factor}），时长${duration}。活动应符合该年龄段幼儿发展特点，具有教育意义和趣味性，包含具体的指导语和家长参与建议，帮助家长了解活动对幼儿发展的促进作用。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 15. 家长科普内容创作
+        function generateSciencePrompt() {
+            const topic = document.getElementById("scienceTopic").value;
+            const format = document.getElementById("scienceFormat").value;
+            const audience = document.getElementById("scienceAudience").value;
+            const focus = document.getElementById("scienceFocus").value;
+            
+            const prompt1 = `创作一篇关于${topic}的家长${format}，面向${audience}，重点内容包括${focus}。内容科学准确，语言通俗易懂，实用性强，能解决家长实际困惑，篇幅适中，结构清晰。`;
+            
+            const prompt2 = `为${audience}撰写关于${topic}的${format}，核心内容是${focus}。内容应专业可靠，结合幼儿发展特点，提供具体可操作的建议，避免专业术语，让家长容易理解和应用，形式符合${format}的特点。`;
+            
+            const prompt3 = `作为学前教育专家，为${audience}创作一份关于${topic}的${format}，重点阐述${focus}。内容需包括：相关理论依据、实践方法、常见问题解答和注意事项，语言亲切自然，既有科学性又有实用性，帮助家长科学育儿。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 16. 教具设计生成
+        function generateTeachingAidPrompt() {
+            const type = document.getElementById("teachingAidType").value;
+            const field = document.getElementById("teachingAidField").value;
+            const age = document.getElementById("teachingAidAge").value;
+            const materials = document.getElementById("teachingAidMaterials").value;
+            const goal = document.getElementById("teachingAidGoal").value;
+            
+            const prompt1 = `设计一份${type}的制作指南，适用于幼儿园${field}领域教学，适合${age}幼儿使用。教育目标是${goal}，建议使用${materials}等材料。内容应包括制作步骤、使用方法、教育价值和安全提示，步骤清晰，材料易获取。`;
+            
+            const prompt2 = `生成${type}的详细制作教程，用于${field}领域教学，帮助${age}幼儿达成${goal}的教育目标。材料可选用${materials}，教程需包含：所需材料清单、分步制作图解说明、多种玩法建议和教育效果分析，简单易行，适合幼儿园教师自制。`;
+            
+            const prompt3 = `作为幼儿园教具制作专家，设计适合${age}幼儿的${type}，用于${field}教学活动，帮助实现${goal}。请提供：1. 教具设计理念；2. 详细制作步骤（可使用${materials}）；3. 教学应用实例；4. 延伸改造建议。确保教具安全耐用，符合幼儿操作特点。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 17. 环境布置素材
+        function generateDecorPrompt() {
+            const area = document.getElementById("decorArea").value;
+            const type = document.getElementById("decorType").value;
+            const style = document.getElementById("decorStyle").value;
+            const wordCount = document.getElementById("decorWordCount").value;
+            
+            const prompt1 = `生成适合幼儿园${area}的${type}文字内容，风格为${style}，${wordCount}。内容应符合幼儿年龄特点，教育意义与趣味性结合，语言简洁生动，易于幼儿理解和接受，能起到环境育人的作用。`;
+            
+            const prompt2 = `为幼儿园${area}设计${type}文字素材，风格要求${style}，文字${wordCount}。内容需考虑该区域功能特点，符合幼儿认知水平，既能体现教育目标，又能美化环境，可提供5-8条不同的内容供选择。`;
+            
+            const prompt3 = `作为幼儿园环境创设专家，创作适用于${area}的${type}文字内容，风格为${style}，要求${wordCount}。文字应具备：1. 教育性（符合幼儿发展目标）；2. 互动性（能引发幼儿关注）；3. 艺术性（语言优美）；4. 适宜性（符合区域特点）。提供具体可直接使用的文字内容。`;
+            
+            document.getElementById("promptResult").innerHTML = `
+                <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
+                <div class="prompt-item"><strong>提示词2：</strong>${prompt2}</div>
+                <div class="prompt-item"><strong>提示词3：</strong>${prompt3}</div>
+            `;
+            scrollToResult();
+        }
+
+        // 18. 活动素材包
+        function generateMaterialPrompt() {
+            const theme = document.getElementById("materialTheme").value;
+            const age = document.getElementById("materialAge").value;
+            const scenario = document.getElementById("materialScenario").value;
+            
+            // 获取选中的素材内容
+            const contents = Array.from(document.getElementById("materialContents").selectedOptions).map(option => option.value);
+            const contentText = contents.length > 0 ? contents.join("、") : "各类活动素材";
+            
+            const prompt1 = `生成一套以${theme}为主题的幼儿园活动素材包，适合${age}幼儿在${scenario}中使用。素材包应包含${contentText}等内容，所有素材风格统一，符合该年龄段幼儿特点，教育目标明确，可直接用于教学活动。`;
+            
+            const prompt2 = `设计一套${theme}主题的活动素材组合，适用于${age}幼儿的${scenario}。包含${contentText}等内容，素材之间相互关联，形成完整的主题教育体系，每个素材都注明适用方法和教育价值，方便教师直接选用。`;
+            
+            const prompt3 = `作为幼儿园课程资源设计师，为${age}幼儿设计${theme}主题的活动素材包，用于${scenario}。素材包需包含${contentText}，所有素材应：1. 符合幼儿发展特点；2. 体现主题核心价值；3. 具有可操作性；4. 包含多元智能发展元素。提供每个素材的具体内容和使用建议。`;
             
             document.getElementById("promptResult").innerHTML = `
                 <div class="prompt-item"><strong>提示词1：</strong>${prompt1}</div>
