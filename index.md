@@ -6,8 +6,6 @@
 
 - [一、AI工具选择表](./tools.md)
 - [二、提示词模板库](./prompts.md)
-- [三、家园共育AI应用](./family-education.md)
-- [四、资源快速制作工具](./resources.md)
 
 ---
 
