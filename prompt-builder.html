@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>提示词生成器</title>
+    <style>
+        /* 简单美化界面 */
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; }
+        .input-area { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        input, textarea { width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .result { margin: 20px 0; padding: 15px; background-color: #f9f9f9; border-radius: 5px; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>幼儿园提示词生成器</h1>
+    <p>填写下方信息，自动生成可用的提示词👇</p>
+
+    <!-- 故事创作场景 -->
+    <div class="input-area">
+        <h3>1. 故事创作</h3>
+        主题：<input type="text" id="storyTheme" placeholder="例如：友谊、勇敢"><br>
+        年龄段：<input type="text" id="storyAge" placeholder="例如：小班、中班"><br>
+        特殊要求：<input type="text" id="storyReq" placeholder="例如：加入动物角色"><br>
+        <button onclick="generateStoryPrompt()">生成提示词</button>
+    </div>
+
+    <!-- 生成的提示词结果 -->
+    <div class="result">
+        <h3>生成的提示词：</h3>
+        <p id="promptResult"></p>
+    </div>
+
+    <script>
+        // 生成故事提示词的功能
+        function generateStoryPrompt() {
+            // 获取老师输入的内容
+            const theme = document.getElementById("storyTheme").value;
+            const age = document.getElementById("storyAge").value;
+            const req = document.getElementById("storyReq").value;
+
+            // 生成2个提示词（自动替换输入的内容）
+            const prompt1 = `请为${age}幼儿创作一个关于${theme}的故事，语言简单易懂，句子简短，加入${req}，结局要温暖积极，适合老师讲述。`;
+            const prompt2 = `我需要一个给${age}孩子的小故事，主题是${theme}，主角可以是${req}，故事里要有1-2个简单对话，帮助幼儿理解${theme}的意义。`;
+
+            // 显示结果
+            document.getElementById("promptResult").innerHTML = 
+                `提示词1：${prompt1}<br><br>提示词2：${prompt2}`;
+        }
+    </script>
+
+    <p><a href="./index.md">返回首页</a></p>
+</body>
+</html>
